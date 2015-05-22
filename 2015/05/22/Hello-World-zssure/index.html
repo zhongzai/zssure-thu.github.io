@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hello World ZSSURE | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="背景：最近项目中遇到的实际问题较多，且大多是较隐蔽的、不易被发现的错误。究其根源来看，还是对DICOM3.0协议中的细节掌握不够仔细，因而导致在实际编码过程中，常常想当然。前一篇中剖析了由于DicomClient中的AddRequest与Send函数调用逻辑错误导致的System.ObjectDisposedException异常，接下来要讲的是关于DICOM胶片打印的问题，由于在Associat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hello World ZSSURE">
+<meta property="og:url" content="http://yoursite.com/2015/05/22/Hello-World-zssure/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="背景：最近项目中遇到的实际问题较多，且大多是较隐蔽的、不易被发现的错误。究其根源来看，还是对DICOM3.0协议中的细节掌握不够仔细，因而导致在实际编码过程中，常常想当然。前一篇中剖析了由于DicomClient中的AddRequest与Send函数调用逻辑错误导致的System.ObjectDisposedException异常，接下来要讲的是关于DICOM胶片打印的问题，由于在Associat">
+<meta property="og:image" content="http://img.blog.csdn.net/20150418235538433">
+<meta property="og:image" content="http://img.blog.csdn.net/20150418235831428">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000030690">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000039504">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000142138">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000429012">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000820329">
+<meta property="og:image" content="http://img.blog.csdn.net/20150419000250903">
+<meta property="og:updated_time" content="2015-05-22T08:37:30.627Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hello World ZSSURE">
+<meta name="twitter:description" content="背景：最近项目中遇到的实际问题较多，且大多是较隐蔽的、不易被发现的错误。究其根源来看，还是对DICOM3.0协议中的细节掌握不够仔细，因而导致在实际编码过程中，常常想当然。前一篇中剖析了由于DicomClient中的AddRequest与Send函数调用逻辑错误导致的System.ObjectDisposedException异常，接下来要讲的是关于DICOM胶片打印的问题，由于在Associat">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Hello-World-zssure" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/22/Hello-World-zssure/" class="article-date">
+  <time datetime="2015-05-22T08:37:30.627Z" itemprop="datePublished">2015-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hello World ZSSURE
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景："><font face="Microsoft YaHei" color="green">背景：</font></h2><p>最近项目中遇到的实际问题较多，且大多是较隐蔽的、不易被发现的错误。究其根源来看，还是对DICOM3.0协议中的细节掌握不够仔细，因而导致在实际编码过程中，常常想当然。前一篇中剖析了由于<strong>DicomClient中的AddRequest与Send函数调用逻辑错误导致的System.ObjectDisposedException异常</strong>，接下来要讲的是关于DICOM胶片打印的问题，由于<font color="red"><strong>在Association Negotiation中PresentationContext协商失误导致DICOM Print SCU在连接某些型号打印机时无法出片</strong></font>。<br><a id="more"></a></p>
+<h2 id="DICOM_Print："><font face="Microsoft YaHei" color="green">DICOM Print：</font></h2><p>DICOM3.0协议中关于PRINT的部分主要有：<strong>第4部分的附录H</strong>、<strong>第17部分的附录BB</strong>，在第4部分的附录H中主要讲解的是整体DICOM Print SOP，即服务对象对；而第17部分附录BB中给出的是一个具体的DICOM Print SCU实现过程。因此在利用dcmtk、fo-dicom或者dcm4che开源库来实现自己的DICOM Print服务（SCU或SCP）时应该先仔细阅读第4部分附录H中关于该服务的详细定义与介绍，然后再按照第17部分的附录BB中示例的流程进行实际开发。第17部分附录BB中给出的具体流程如下：<br><br><img src="http://img.blog.csdn.net/20150418235538433" alt="这里写图片描述"><br>由图中可见，在Association Negotiation阶段并未给出详细的步骤，而这部分恰恰是项目实际部署过程中遇到隐含问题的地方，在介绍问题之前先介绍一个DICOM Print服务中独有的服务。。</p>
+<h2 id="DICOM_Meta_SOP_Class与DICOM_SOP_Class："><font face="Microsoft YaHei" color="green">DICOM Meta SOP Class与DICOM SOP Class：</font></h2><h3 id="Presentation_Context："><font face="Microsoft YaHei" color="blue">Presentation Context：</font></h3><p>在DICOM协议底层建立连接时，会用到Presentation Context，如下图所示：<br><br><img src="http://img.blog.csdn.net/20150418235831428" alt="这里写图片描述"><br>简而言之PresentationContext就是连接上下文，存储用于连接双方进行协商的信息，具体的介绍可参阅专栏中的博文<a href=""></a>和<a href=""></a>。DICOM协议规定，在连接请求（Association Negotiation）过程中，由请求发起方设置各个Presentation Context的ID号，该ID号不具有实际意义，类似于数据库中的主键Primary Key，仅用于区别各个Presentation Context，被请求端在接收到请求端发送过来的请求后，并不会修改消息中PresentationContext的ID号，因此理论上而言请求端可以自行设置各个PresentationContext的ID号，且对于各PresentationContext的ID号的排序也没有任何要求。关于PresentationContext的详细介绍可阅读DICOM3.0标准第8部分的7.1.1.13。<br><br>如上图所示每个PresentationContext包含三个部分，</p>
+<ul>
+<li><strong>第一部分</strong>，<strong>ID号</strong>；</li>
+<li><strong>第二部分</strong>，<strong>AbstractSyntax</strong>，这个在博文<a href=""></a>中有过介绍，要区别于随后提到的TransferSyntax，AbstractSyntax可以简单理解为每项服务的抽象的名称；<br></li>
+<li><strong>第三部分</strong>，<strong>TransferSytanx</strong>，该部分要求每一个PresentationContext中服务端和客户端之间<strong>有且仅有一种</strong>TransferSyntax用于彼此间数据交换的编码格式。<br></li>
+</ul>
+<p>【注】：AbstarctSyntax在DICOM3.0标准的第4部分有详细介绍；TransferSyntax在DICOM3.0标准的第5部分有详细介绍，此外在第8部分的附录B中也有相关对比</p>
+<h3 id="DICOM_UID分类："><font face="Microsoft YaHei" color="blue">DICOM UID分类：</font></h3><p>UID，全称为<a href="http://medical.nema.org/dicom/2013/output/chtml/part05/chapter_9.html" target="_blank" rel="external">Unique Identifiers</a>，用于区别各项事务，确保在多国家、地区、供应商，以及设备间的唯一性。<br><br>虽然UID的目的只有一个区别各项事务，确保唯一性。但是由于各自代表的领域不同、服务的对象不同、具体使用的场景不同，开源库在具体实现时会对UID进行分类，用于标记区分各事务。下面以fo-dicom中DicomUID为例进行讲解：<br><br>在DicomUID类中，定义了DicomUidType枚举类型，</p>
+<pre><code> public <span class="class"><span class="keyword">enum</span> <span class="title">DicomUidType</span> </span>{
+                    TransferSyntax,
+                    SOPClass,
+                    MetaSOPClass,
+                    SOPInstance,
+                    ApplicationContextName,
+                    CodingScheme,
+                    FrameOfReference,
+                    LDAP,
+                    Unknown
+}
+</code></pre><p>由此推测DICOM协议中的UID大致分成9类，下面对于各种类型进行详细介绍：<br></p>
+<font color="red"><strong>1）TransferSyntax</strong></font>,该类UID就是我们之前提到的用于标识客户端与服务端之间消息流传输的各种编码格式。<br><br><font color="red"><strong>2）SOPClass</strong> </font>,即常见的服务对象对类型，Service-Object-Pairs Class。主要用于标记各种服务，例如DIMSE-C服务、DIMSE-N服务。<br><br><font color="red"><strong>3）MetaSOPClass</strong></font>,<strong><font color="blue">是一系列SOP Class</font></strong>的集合，具体参见<a href="http://medical.nema.org/medical/dicom/current/output/chtml/part04/sect_H.3.2.2.html" target="_blank" rel="external">Meta SOP Class Definitions</a>，Meta SOP Class中最常见的就是两种具体打印服务，即Basic Grayscale Print Management Meta SOP Class和Basic Color Print Management Meta SOP Class。如下图所示：<br><br><img src="http://img.blog.csdn.net/20150419000030690" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150419000039504" alt="这里写图片描述"><br><font color="red"><strong>4）SOPInstance</strong></font>,用于描述现实场景中具体的“实例”，可以脱离于交互上下文、交互环境（Communication Context）而存在，例如后缀为.dcm的医学图像文件等等。<br><br><font color="red"><strong>5）ApplicationContextName</strong></font>,该UID是DICOM专属的，用于标识DICOM应用，因此ApplicationContextName类中有且只有一个对象，即<br><br>     /// <summary> Application Context Name: DICOM Application Context Name [PS 3.7]</summary><br>     public static DicomUID DICOMApplicationContextName = new DicomUID(“1.2.840.10008.3.1.1.1” , “DICOM Application Context Name”, DicomUidType.ApplicationContextName);<br><font color="red"><strong>6）CodingScheme</strong></font>,DICOM协议中的编码方案，可以简单的理解为DICOM协议中各种符号含义的约定，具体可参见<a href="http://dicom.nema.org/dicom/2013/output/chtml/part16/chapter_D.html" target="_blank" rel="external">DICOM3.0第16部分附录D</a><br><br><font color="red"><strong>7）FrameOfReference</strong></font>,用于定位的坐标系，该坐标系是已经公开的、约定俗成的，例如脑图谱中著名的Talairach Brain Atlas Frame of Reference，具体可查阅Wiki百科，如下图所示：<br><img src="http://img.blog.csdn.net/20150419000142138" alt="这里写图片描述"><br><br>关于FrameOfReference还可阅读国外文献资料，例如<a href="http://www.nil.wustl.edu/labs/kevin/man/answers/mnispace.html" target="_blank" rel="external">The MNI brain and the Talairach atlas</a>和<a href="http://www.brainmap.org/pubs/LancasterHBM07.pdf" target="_blank" rel="external">Bias Between MNI and Talairach Coordinates Analyzed Using the ICBM-I5 Brain Template</a>。<br><br><font color="red"><strong>8）LDAP</strong></font>,Lightweight Directory Access Protocol，中文称之为“轻型目录访问协议”。具体可搜索资料，我也是一知半解。<br><br><font color="red"><strong>9）UnKnown</strong></font>,其他预留扩展使用，或用户自定义。<br><br>###<font face="Microsoft YaHei" color="blue">MetaSOPClass与SOPClass的对比：</font><br>综上所述，之前项目的DICOM Print SCU实现中对于DICOM Print部分的PresentationContext的判断逻辑有误，DICOM Printer（即Print SCP）支持的服务分为<font color="red"><strong>Verification SOP Class</strong>、<strong>Basic Grayscale Print Management Meta SOP Class</strong> 和 <strong>Basic Color Print Management Meta SOP Class</strong></font>。其中<strong>Basic Grayscale Print Management Meta SOP Class</strong> 和 <strong>Basic Color Print Management Meta SOP Class</strong>是诸多SOPClass的集合，具体如上文截图所示。<br><br>因此判断逻辑中首先需要判别的是<font color="red"><strong>VerificationSOP Class</strong>、 <strong>Basic Grayscale Print Management Meta SOP Class</strong> 和 <strong>Basic Color Print Management Meta SOP Class</strong></font>等最顶层级别的SOPClassUID，而不需要直接判别PrinterSOPClass，原因是：<br><br><br>    /// <summary> SOP Class: Printer SOP Class [PS 3.4] </summary><br>     public static DicomUID PrinterSOPClass = new DicomUID (“1.2.840.10008.5.1.1.16”, “Printer SOP Class” , DicomUidType.SOPClass);<br><strong>PrinterSOPClass</strong>是SOPClass类型的DicomUID，属于SOPClasses集合<strong>Basic Grayscale Print Management Meta SOP Class</strong> 或 <strong>Basic Color Print Management Meta SOP Class</strong>。此刻再倒回头去看一下DICOM协议第17部分附录BB中给出的示例，PrinterSOPClass只是在N-GET服务中使用，用于SCU端获取DICOM Printer打印机的各种参数。<br><br>根据上述概念，用类图的形式来表示各概念之间的包含关系。SOP Class和Meta SOP Class都属于Service Class，SOP Class中包含IOD和DIMSE Service。<br><br><img src="http://img.blog.csdn.net/20150419000429012" alt="这里写图片描述"><br>###<font face="Microsoft YaHei" color="blue">DICOM Print SCU 与SCP连接协商逻辑：</font><br>在之前[冷锋的博文]中介绍过利用DCMTK工具包来简单的模拟实现DICOM 打印的过程，但是之前并未详细分析梳理过相关代码，究其原因是因为身边没有胶片打印机。现在由于实际部署过程中遇到了上述问题——<strong><font color="red">即DICOM打印过程中如何协商PresentationContext？？？</font></strong>。下载通过分析DCMTK库中具体的源码，给出其中对于DICOM 打印过程中PresentationContext协商的具体实现。<br><br><img src="http://img.blog.csdn.net/20150419000820329" alt="这里写图片描述"><br>##<font face="Microsoft YaHei" color="green">知识点补充：</font><br>下面对博文中提到的诸多概念进行简单介绍，并给出各概念在DICOM3.0协议中的具体位置。<br><br><img src="http://img.blog.csdn.net/20150419000250903" alt="这里写图片描述"><br>至此关于<strong>DICOM胶片打印服务的连接建立过程中如何协商PresentationContext</strong>的逻辑介绍就完成了。<br><br><br><strong><font color="red">PS：</font></strong> <font color="red">我一直阅读的本机DICOM3.0协议是2011版，前几天在跟朋友沟通时发现DICOM官网已经更新到了<strong><a href="http://medical.nema.org/standard.html" target="_blank" rel="external">2015a版本</a></strong>，因此后续的介绍中我会尽量按照最新协议来分析，或者至少给出与2011版本中对应的最新2015a版中的内容，如果在2015a中没有找到博文中对应的内容请及时与我联系。</font>
+
+<p><br><br><br><br><br></p>
+<font face="Microsoft YaHei" color="blue" size="4"><strong>作者：zssure@163.com</strong></font><br><br><font face="Microsoft YaHei" color="blue" size="4"><strong>时间：2015-04-18</strong></font>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ci9zbtozu0000l4np3shk8j1j" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/05/22/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/05/22/Hello-World-zssure/">Hello World ZSSURE</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/22/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
