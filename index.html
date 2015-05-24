@@ -65,6 +65,93 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" class="article-date">
+  <time datetime="2015-05-24T08:16:12.000Z" itemprop="datePublished">2015-05-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/">利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><h1><font face="Microsoft YaHei" color="red">背景：</font><br></h1><br>目前对于传统WEB网站性能（压力/负载）的测试工具有很多，loadrunner、iperf、siege等，操作都比较简单，这里就不介绍了。然而对于医疗领域内的服务器，通常指的是DICOM服务器，提供满足DICOM3.0标准规定的各项DIMSE服务，诸如DIMSE-C(C-STORE、C-FIND、C-MOVE、C-ECHO)、DIMSE-N(N-CREATE、N-DELETE)等等。倘若使用传统的压力测试工具会有几大局限性：</p>
+<p><ol><br>  <li><b><font color="green">常见压力测试工具，通过模拟上千万用户实施并发负载及实时性能监测的方式来实现对WEB服务端的压力测试，且模拟的并发请求多以<u>HTTP或TCP</u>为主。然而DICOM服务无法直接通过HTTP请求进行访问（WADO、WADO-RS服务除外）。</font></b></li><br>  <li><b><font color="green">虽然部分压力测试工具（例如LoadRunner、JMeter等）可以发送TCP请求进行压力测试，但是DICOM服务在TCP基础上还需要继续多次“请求-响应”来完成，通过常见的手动填充TCP数据体的方式无法模拟真实的DICOM请求。</font></b></li><br>  <li><b><font color="green">遵循DICOM协议的PACS影像服务器自身通常有一定的约束，例如模拟多用户同时上传同一组图像（即同时发送同一套数据）时服务端可能会直接忽略数据体来减少负载，即使我们成功模拟了请求，此时的检测的性能并不能代表影像服务器性能上限，测试结果不准确。</font></b></li><br></ol><br>
+        
+          <p class="article-more-link">
+            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="cia2863oa0001jknpn1gw72a9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-buildmyselfPageOnGithub" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/22/buildmyselfPageOnGithub/" class="article-date">
+  <time datetime="2015-05-22T11:54:50.000Z" itemprop="datePublished">2015-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/22/buildmyselfPageOnGithub/">利用Hexo构建自己在GitHub上的主页</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><h2><font face="Microsoft YaHei" color=blue>背景：</font></h2><br>近期在跟圈内朋友谈一件事情：<br><br><b><font size=3 color=grey>搭建一个关于DICOM协议的中文社区，以开源书籍的模式，自发翻译<a href="http://dicom.nema.org/">DICOM官方</a>最新标准。</font><font color=purple><u>以DICOM协议为切入点，通过阅读、研究、到最后翻译，更加全面掌握标准，尤其是加深对医疗行业的了解。</u></font><br></b><br><b><font size=3 color=grey>随着国内新医改的逐步深入，各行各业的创业者开始涉足医疗行业，无论出于颠覆旧有体制和现行标准，还是出于对DICOM标准了解不足的角度，未来新的医疗大环境下必然需要标准的更新，或新的标准。称之为DICOMX.X也好，称之为XXX也罢。</font><font color=purple><u>充分研读现有标准，实时关注当下新需求，为改善或制定适应未来医疗环境的新标做准备……</u></font></b><br>
+        
+          <p class="article-more-link">
+            <a href="/2015/05/22/buildmyselfPageOnGithub/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="cia2863ol0005jknplg634xnk" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Hello-World-zssure" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/05/22/Hello-World-zssure/" class="article-date">
@@ -96,7 +183,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ci9ziv9dc0000ycnpvs05s9qi" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="cia2863mp0000jknpbh6sqxai" class="article-share-link">Share</a>
       
       
     </footer>
@@ -141,7 +228,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="ci9ziv9e10001ycnpmxdchn5l" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="cia2863oi0004jknp6y6knczt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -159,14 +246,28 @@
     
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/DICOM-JMeter-dcm4che2/" style="font-size: 10px;">DICOM,JMeter,dcm4che2</a> <a href="/tags/hexo-node-js-npm-github-git/" style="font-size: 10px;">hexo, node.js, npm, github, git</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -176,6 +277,14 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/">利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/22/buildmyselfPageOnGithub/">利用Hexo构建自己在GitHub上的主页</a>
+          </li>
         
           <li>
             <a href="/2015/05/22/Hello-World-zssure/">Hello World ZSSURE</a>
