@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   
-  <title>利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能 | zssure</title>
+  <title>基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇） | zssure</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="背景：目前对于传统WEB网站性能（压力/负载）的测试工具有很多，loadrunner、iperf、siege等，操作都比较简单，这里就不介绍了。然而对于医疗领域内的服务器，通常指的是DICOM服务器，提供满足DICOM3.0标准规定的各项DIMSE服务，诸如DIMSE-C(C-STORE、C-FIND、C-MOVE、C-ECHO)、DIMSE-N(N-CREATE、N-DELETE)等等。倘若使用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能">
+<meta property="og:title" content="基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇）">
 <meta property="og:url" content="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/index.html">
 <meta property="og:site_name" content="zssure">
 <meta property="og:description" content="背景：目前对于传统WEB网站性能（压力/负载）的测试工具有很多，loadrunner、iperf、siege等，操作都比较简单，这里就不介绍了。然而对于医疗领域内的服务器，通常指的是DICOM服务器，提供满足DICOM3.0标准规定的各项DIMSE服务，诸如DIMSE-C(C-STORE、C-FIND、C-MOVE、C-ECHO)、DIMSE-N(N-CREATE、N-DELETE)等等。倘若使用">
@@ -17,9 +17,9 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20150524170451499">
 <meta property="og:image" content="http://img.blog.csdn.net/20150524170503308">
 <meta property="og:image" content="http://img.blog.csdn.net/20150524170512606">
-<meta property="og:updated_time" content="2015-05-24T09:13:18.470Z">
+<meta property="og:updated_time" content="2015-05-24T15:40:53.924Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能">
+<meta name="twitter:title" content="基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇）">
 <meta name="twitter:description" content="背景：目前对于传统WEB网站性能（压力/负载）的测试工具有很多，loadrunner、iperf、siege等，操作都比较简单，这里就不介绍了。然而对于医疗领域内的服务器，通常指的是DICOM服务器，提供满足DICOM3.0标准规定的各项DIMSE服务，诸如DIMSE-C(C-STORE、C-FIND、C-MOVE、C-ECHO)、DIMSE-N(N-CREATE、N-DELETE)等等。倘若使用">
   
     <link rel="alternative" href="/atom.xml" title="zssure" type="application/atom+xml">
@@ -84,7 +84,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能
+      基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇）
     </h1>
   
 
@@ -138,12 +138,12 @@
 <p></p><h2><font face="Microsoft YaHei" color="green">使用说明：</font></h2><br>1）将上述备选方案导出为jar包，例如jMeterTestDICOM.jar。<br>2）拷贝jMeterTestDICOM.jar包到JMeter的lib/ext目录下；<br>3）将jMeterTestDICOM.jar包依赖的jar包同时拷贝到lib/ext目录下，即dcm4che2-2.0.28/lib下的所有jar包（为了保险起见，拷贝所有jar包）<br>4）进入JMeter源码的bin目录，运行jMeter.bat脚本，弹出启动界面：<br><img src="http://img.blog.csdn.net/20150524165947414" alt="这里写图片描述"><br>5）在JMeter中新建Java请求测试方案（具体操作参考：<a href="http://www.cnblogs.com/yuki-lau/archive/2013/04/20/3033010.html" target="_blank">http://www.cnblogs.com/yuki-lau/archive/2013/04/20/3033010.html</a>）<br>6）在Java请求中选中刚才新建的jMeterTestDICOM.jar包的dcmSendSamper类，如下图：<br><img src="http://img.blog.csdn.net/20150524170242696" alt="这里写图片描述"><br>7）如图中输入IP、Port、AET、CallingAEt、FilePath、ThreadNumber参数，即可启动压力测试。<p></p>
 <p><font color="#e33737"><b><br><br>【说明】</b>：上图中的参数最终会传递到dcmSendSampler类中，runTest中会自动构造dcmsnd的命令行参数，即AET@IP:Port。其中需要格外说明的是FilePath参数，为了尽最大可能模拟现实中多用户并发上传，希望JMeter的每个线程传递的数据是不同的，因此在FilePath中是根目录，通过结合ThreadNumber（即总的JMeter线程并发数）来自动构造不同的二级目录，构造方式是：FilePath+”\“+String.valueOf(Thread.CurrentThread().getId()%ThreadNumber+1)，即JMeter并发线程数有多少，就需要在FilePath根目录下创建从1到并发线程数对应数量的文件夹，内用任意数量的dcm文件填充。</font></p>
 <p></p><h2><font face="Microsoft YaHei" color="green">测试结果：</font></h2><br>由于直接使用的是dcm4che2工具包的工具，对于具体的测试结果就不分析了，直接贴几张实测结果图：<br><img src="http://img.blog.csdn.net/20150524170301026" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150524170451499" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150524170503308" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150524170512606" alt="这里写图片描述"><p></p>
-<p><br><br><br><br><br><br><b><font size="4" face="Microsoft YaHei" color="blue">作者：zssure@163.com</font></b><br><b><font size="4" face="Microsoft YaHei" color="blue">时间：2015-05-24</font></b></p>
+<p><br><br><br><br><br><br><b><font size="4" face="Microsoft YaHei" color="blue">作者：zssure@163.com</font></b><br><br><b><font size="4" face="Microsoft YaHei" color="blue">时间：2015-05-24</font></b></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="cia28zpu90001c0np17028ru8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="cia2mnhlc00014cnpakuroe4v" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -153,6 +153,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          基于JMeter+dcm4che2测试PACS服务器性能的解决方案（续篇）
+        
+      </div>
+    </a>
   
   
     <a href="/2015/05/22/buildmyselfPageOnGithub/" id="article-nav-older" class="article-nav-link-wrap">
@@ -175,7 +184,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -184,7 +193,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/DICOM-JMeter-dcm4che2/" style="font-size: 10px;">DICOM,JMeter,dcm4che2</a> <a href="/tags/hexo-node-js-npm-github-git/" style="font-size: 10px;">hexo, node.js, npm, github, git</a>
+      <a href="/tags/DICOM-JMeter-dcm4che2/" style="font-size: 20px;">DICOM,JMeter,dcm4che2</a> <a href="/tags/hexo-node-js-npm-github-git/" style="font-size: 10px;">hexo, node.js, npm, github, git</a>
     </div>
   </div>
 
@@ -193,7 +202,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -205,7 +214,11 @@
       <ul>
         
           <li>
-            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/">利用JMeter+dcm4che2测试DICOM服务器的C-STORE SCP性能</a>
+            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/">基于JMeter+dcm4che2测试PACS服务器性能的解决方案（续篇）</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/">基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇）</a>
           </li>
         
           <li>
