@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>add UserIdentity Sub Item to mDCM | zssure</title>
+  <title>Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM) | zssure</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="背景:5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="add UserIdentity Sub Item to mDCM">
+<meta property="og:title" content="Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)">
 <meta property="og:url" content="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/index.html">
 <meta property="og:site_name" content="zssure">
 <meta property="og:description" content="背景:5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)中">
 <meta property="og:image" content="http://img.blog.csdn.net/20150527200833832">
 <meta property="og:image" content="http://img.blog.csdn.net/20150527200951099">
 <meta property="og:image" content="http://img.blog.csdn.net/20150527201033546">
-<meta property="og:updated_time" content="2015-05-27T12:18:14.831Z">
+<meta property="og:updated_time" content="2015-05-27T12:25:21.356Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="add UserIdentity Sub Item to mDCM">
+<meta name="twitter:title" content="Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)">
 <meta name="twitter:description" content="背景:5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)中">
   
     <link rel="alternative" href="/atom.xml" title="zssure" type="application/atom+xml">
@@ -81,7 +81,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      add UserIdentity Sub Item to mDCM
+      Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)
     </h1>
   
 
@@ -90,7 +90,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p></p><h1><font face="Microsoft YaHei" color="blue">背景:</font></h1><br>5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。<br><br>今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文<b><a href="http://blog.csdn.net/zssureqh/article/details/45958139" target="_blank" rel="external">基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)</a></b>中提到的DICOM标准第15部分中的TransferCapability概念，本篇介绍<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D" target="_blank" rel="external">标准第8部分附录D</a></b>中A-ASSOCIATE-RQ中的UserInformation，以及其扩展UserIdentity（<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7" target="_blank" rel="external">DICOM3.0标准第7部分附录D</a></b>)<br><p></p>
-<font color="red">此外，在文章后半段，会通过对比dcm4che2与fo-dicom(mDCM）的实现，同时借助于RawCap+WireShark对实际数据包进行分析，给出扩展UserInformation的实现。</font><br><br><br><h1><font face="Microsoft YaHei" color="blue">UserInformation:</font></h1><br>关于UserInformation的详细介绍在<a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D" target="_blank" rel="external">标准第8部分附录D</a>，其属于A-ASSOCIATE-RQ PDU结构子项。A-ASSOCIATE-RQ PDU的Application Context以及Presentation Context两个子项之前介绍比较多，且与DICOM连接Association建立密切相关。对于User Information子项介绍的不多，该子项以0x50H为标志，内部可进一步扩展子项，范围从0x51H-0xFFH。在第8部分的附录D中只是简略的介绍了Maximum length子项，起始标志为0x51H。该项用于约束连接双方传递数据包P-DATA-TF的最大长度。<br><br>关于UserInformation项，标准中有两条注意事项:<br><br>&gt; <font color="grey"><b>1. The values of the Sub-Items types in the User Information Field are assigned by this standard in the range of 51H through FFH. Sub-Item values are defined by PS 3.7 and PS 3.8.<br><br><br>2. Succeeding editions of the Standard may define additional user information Sub-Items in a manner that does not affect the semantics of previously defined Sub-Items. Association acceptors compliant to<br>an earlier edition of the Standard are required to ignore such unrecognized user information Sub-Items and not reject an Association because of their presence.<br></b></font>
+<font color="red">此外，在文章后半段，会通过对比dcm4che2与fo-dicom(mDCM）的实现，同时借助于RawCap+WireShark对实际数据包进行分析，给出扩展UserInformation的实现。</font><br><br><a id="more"></a><br><h1><font face="Microsoft YaHei" color="blue">UserInformation:</font></h1><br>关于UserInformation的详细介绍在<a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D" target="_blank" rel="external">标准第8部分附录D</a>，其属于A-ASSOCIATE-RQ PDU结构子项。A-ASSOCIATE-RQ PDU的Application Context以及Presentation Context两个子项之前介绍比较多，且与DICOM连接Association建立密切相关。对于User Information子项介绍的不多，该子项以0x50H为标志，内部可进一步扩展子项，范围从0x51H-0xFFH。在第8部分的附录D中只是简略的介绍了Maximum length子项，起始标志为0x51H。该项用于约束连接双方传递数据包P-DATA-TF的最大长度。<br><br>关于UserInformation项，标准中有两条注意事项:<br><br>&gt; <font color="grey"><b>1. The values of the Sub-Items types in the User Information Field are assigned by this standard in the range of 51H through FFH. Sub-Item values are defined by PS 3.7 and PS 3.8.<br><br><br>2. Succeeding editions of the Standard may define additional user information Sub-Items in a manner that does not affect the semantics of previously defined Sub-Items. Association acceptors compliant to<br>an earlier edition of the Standard are required to ignore such unrecognized user information Sub-Items and not reject an Association because of their presence.<br></b></font>
 
 <p>由上述注意事项可知，之前鲜有涉猎UserInformation字段而并未影响我们完成DIMSE中的各种服务是因为<b><font color="red">“标准中提到后续更新的版本中会加入对自定义扩展的说明，对于符合早期DICOM标准的终端（即A-ASSOCIATE-RQ接收方）需要<u>自动忽略无法识别的UserInformation子项，而不应该因为存在无法识别的子项而拒绝连接请求。</u>”</font></b><br></p>
 <p></p><h1><font face="Microsoft YaHei" color="blue">UserIdentity:</font></h1><br>DICOM标准第8部分在A-ASSOCIATE-RQ PDU结构体中介绍了User Information项目，作为A-ASSOCIATE-RQ PDU的一部分，对于用户自定义扩展并未做深入讨论。既然标准提到了扩展子项可以从0x51H-0xFFH，是不是我们可以任意扩展呢？原则上是可以任意扩展的，只要确保Associate连接双方约定好解析方式即可。<br><br>其实在DICOM3.0标准第7部分的附录中对于UserInformation中常见的扩展有更详细的介绍。在附录中D.3中详解介绍了几种常见的扩展，诸如以<b><font color="red">0x51H</font></b>开头的<b>Max PDU Length</b>，以<b><font color="red">0x52H</font></b>开头的<b>Implentation Identification Notification</b>，以<b><font color="red">0x53H</font></b>开头的<b>Asynchronous Operations Windows Negotiation</b>，以<b><font color="red">0x54H</font></b>开头的<b>SCP/SCU Role Selection Negotiation</b>，以<b><font color="red">0x56H</font></b>开头的<b>Service-Object Pair Class Extended Negotiation</b>，以<b><font color="red">0x57H</font></b>开头的<b>Service-Object Pair Class Common Extended Negotiation</b>，以<b><font color="red">0x58H</font></b>开头的<b><font color="red"><u>User identity Negotiation</u></font></b>等等,<br><br><b>【注1】：在与0x52H开始的Implentation Identification Notification包含了两个子项，其中0x52H对应于Implentation Class UID，0x55H对应于Implentation Version Name</b>。<br><br><br><b>【注2】：在关于UserIdentity扩展字段中，其实包括以0x58H开始的UserIdentityRQ，和以0x59H开始的UserIdentityAC</b>。<br><p></p>
@@ -229,7 +229,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="cia6q3qvn000af0npgjegx0mf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="cia6q7d3a000aqsnpvx8um7z6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a></li></ul>
@@ -291,7 +291,7 @@ pdu.WriteLength16<span class="params">()</span>;
       <ul>
         
           <li>
-            <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">add UserIdentity Sub Item to mDCM</a>
+            <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)</a>
           </li>
         
           <li>

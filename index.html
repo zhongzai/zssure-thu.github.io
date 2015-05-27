@@ -79,7 +79,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">add UserIdentity Sub Item to mDCM</a>
+      <a class="article-title" href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)</a>
     </h1>
   
 
@@ -87,147 +87,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p></p><h1><font face="Microsoft YaHei" color="blue">背景:</font></h1><br>5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。<br><br>今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文<b><a href="http://blog.csdn.net/zssureqh/article/details/45958139" target="_blank" rel="external">基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)</a></b>中提到的DICOM标准第15部分中的TransferCapability概念，本篇介绍<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D" target="_blank" rel="external">标准第8部分附录D</a></b>中A-ASSOCIATE-RQ中的UserInformation，以及其扩展UserIdentity（<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7" target="_blank" rel="external">DICOM3.0标准第7部分附录D</a></b>)<br><p></p>
-<font color="red">此外，在文章后半段，会通过对比dcm4che2与fo-dicom(mDCM）的实现，同时借助于RawCap+WireShark对实际数据包进行分析，给出扩展UserInformation的实现。</font><br><br><br><h1><font face="Microsoft YaHei" color="blue">UserInformation:</font></h1><br>关于UserInformation的详细介绍在<a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D" target="_blank" rel="external">标准第8部分附录D</a>，其属于A-ASSOCIATE-RQ PDU结构子项。A-ASSOCIATE-RQ PDU的Application Context以及Presentation Context两个子项之前介绍比较多，且与DICOM连接Association建立密切相关。对于User Information子项介绍的不多，该子项以0x50H为标志，内部可进一步扩展子项，范围从0x51H-0xFFH。在第8部分的附录D中只是简略的介绍了Maximum length子项，起始标志为0x51H。该项用于约束连接双方传递数据包P-DATA-TF的最大长度。<br><br>关于UserInformation项，标准中有两条注意事项:<br><br>&gt; <font color="grey"><b>1. The values of the Sub-Items types in the User Information Field are assigned by this standard in the range of 51H through FFH. Sub-Item values are defined by PS 3.7 and PS 3.8.<br><br><br>2. Succeeding editions of the Standard may define additional user information Sub-Items in a manner that does not affect the semantics of previously defined Sub-Items. Association acceptors compliant to<br>an earlier edition of the Standard are required to ignore such unrecognized user information Sub-Items and not reject an Association because of their presence.<br></b></font>
-
-<p>由上述注意事项可知，之前鲜有涉猎UserInformation字段而并未影响我们完成DIMSE中的各种服务是因为<b><font color="red">“标准中提到后续更新的版本中会加入对自定义扩展的说明，对于符合早期DICOM标准的终端（即A-ASSOCIATE-RQ接收方）需要<u>自动忽略无法识别的UserInformation子项，而不应该因为存在无法识别的子项而拒绝连接请求。</u>”</font></b><br></p>
-<p></p><h1><font face="Microsoft YaHei" color="blue">UserIdentity:</font></h1><br>DICOM标准第8部分在A-ASSOCIATE-RQ PDU结构体中介绍了User Information项目，作为A-ASSOCIATE-RQ PDU的一部分，对于用户自定义扩展并未做深入讨论。既然标准提到了扩展子项可以从0x51H-0xFFH，是不是我们可以任意扩展呢？原则上是可以任意扩展的，只要确保Associate连接双方约定好解析方式即可。<br><br>其实在DICOM3.0标准第7部分的附录中对于UserInformation中常见的扩展有更详细的介绍。在附录中D.3中详解介绍了几种常见的扩展，诸如以<b><font color="red">0x51H</font></b>开头的<b>Max PDU Length</b>，以<b><font color="red">0x52H</font></b>开头的<b>Implentation Identification Notification</b>，以<b><font color="red">0x53H</font></b>开头的<b>Asynchronous Operations Windows Negotiation</b>，以<b><font color="red">0x54H</font></b>开头的<b>SCP/SCU Role Selection Negotiation</b>，以<b><font color="red">0x56H</font></b>开头的<b>Service-Object Pair Class Extended Negotiation</b>，以<b><font color="red">0x57H</font></b>开头的<b>Service-Object Pair Class Common Extended Negotiation</b>，以<b><font color="red">0x58H</font></b>开头的<b><font color="red"><u>User identity Negotiation</u></font></b>等等,<br><br><b>【注1】：在与0x52H开始的Implentation Identification Notification包含了两个子项，其中0x52H对应于Implentation Class UID，0x55H对应于Implentation Version Name</b>。<br><br><br><b>【注2】：在关于UserIdentity扩展字段中，其实包括以0x58H开始的UserIdentityRQ，和以0x59H开始的UserIdentityAC</b>。<br><p></p>
-<p>近期在项目中要同时使用到fo-dicom(前身是mDCM）和dcm4che2工具包，且需要完成两者之间数据互传，按照之前对DICOM开源库的了解，以为只要配置完成AE Title、IP和Port后即可顺利实现，但是在尝试了几天未果。通过仔细分析dcm4che2附带工具包dcmsnd.bat以及dcmqr.bat，又让我重新阅读了DICOM协议的部分章节，因此也就有了此篇博文。<br><br><br><b><font color="red">问题描述：</font></b><b>使用fo-dicom开源库实现的客户端，诸如CStoreClient，向基于dcm4che2实现的dcm4chee服务器发送DCM数据，在配置完成AETitile、IP以及Port后，体会无法建立连接。</b><br></p>
-<p></p><h1><font face="Microsoft YaHei" color="blue">扩展fo-dicom(mDCM):</font></h1><p></p>
-<p></p><h2><font face="Microsoft YaHei" color="green">RawCap+WireShark抓包分析:</font></h2><br><img src="http://img.blog.csdn.net/20150527200833832" alt="这里写图片描述"><br><br>如上图所示是使用RawCap+WireShark抓取的dcmsnd.bat工具包向基于fo-dicom搭建的PACS服务器发送数据数据包。之所以如此操作，谁因为使用fo-dicom构建的CStoreClient无法顺利向基于dcm4che2的dcm4chee服务器发送数据。我们反向操作发现，竟然可以顺利成功。这说明dcm4che实现的dcmsnd.bat工具包发送的数据量可能比我们使用fo-dicom的CStoreClient要大，可能包含了额外的数据。<br><br>通过分析上图可以发现，多出来的部分就是以0x58H开头的UserIdentity自扩展子项，从我的专栏文章也可以知道之前在介绍dcmtk、fo-dicom、mDCM时并未涉及到该自定义字段。而dcm4che2工具包内部却对其进行了实现，并且在基于dcm4che2搭建的dcm4chee服务端中还通过该扩展字段进行了连接屏蔽（<b><font color="red">貌似这不符合我们之前看到的标准备注中提到的“服务端要忽略无法识别字段，而不应该拒绝连接”的说明。</font></b>想想dcm4chee之所以如是操作，大抵也是为了增加安全性。<br><p></p>
-<p></p><h2><font face="Microsoft YaHei" color="green">dcm4che2工具分析:</font></h2><br>既然已经找到了问题原因，接下来让我们分析一下dcm4che2，找出解决方案。dcm4che2工具包中对于PDU数据结构的定义在PDUEncoder.java文件中。此外在ItemType.java类中预定了各种扩展字段类型枚举变量，具体代码如下:<br><p></p>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">ItemType</span> </span>{
-
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> APP_CONTEXT       = <span class="number">0x10</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RQ_PRES_CONTEXT   = <span class="number">0x20</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> AC_PRES_CONTEXT   = <span class="number">0x21</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ABSTRACT_SYNTAX   = <span class="number">0x30</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSFER_SYNTAX   = <span class="number">0x40</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> USER_INFO         = <span class="number">0x50</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_PDU_LENGTH    = <span class="number">0x51</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> IMPL_CLASS_UID    = <span class="number">0x52</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ASYNC_OPS_WINDOW  = <span class="number">0x53</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ROLE_SELECTION    = <span class="number">0x54</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> IMPL_VERSION_NAME = <span class="number">0x55</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EXT_NEG           = <span class="number">0x56</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> COMMON_EXT_NEG    = <span class="number">0x57</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RQ_USER_IDENTITY  = <span class="number">0x58</span>;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> AC_USER_IDENTITY  = <span class="number">0x59</span>;
-
-}
-</code></pre><p>标准中规定的0x58H扩展项的结构如下:<br><img src="http://img.blog.csdn.net/20150527200951099" alt="这里写图片描述"><br><br>通过分析PDUEncoder.java文件，可以看出dcm4che2是严格按照DICOM标准中对UserIdentity子项的约束来构建的，具体构建过程如下：<br><img src="http://img.blog.csdn.net/20150527201033546" alt="这里写图片描述"><br><br>至此，我们找到了dcm4che2工具中如何向A-ASSOCIATE-RQ PDU中写入UserIdentity扩展项了。接下来就是解决问题的时刻了，让我们看看fo-dicom实现中是否留有接口，让我们来写入UserIdentity这一扩展字段。<br></p>
-<p></p><h2><font face="Microsoft YaHei" color="green">实施fo-dicom(mDCM)扩展：</font></h2><br>通过分析发现fo-dicom以及其早期版本mDCM中并未留有接口，让用户扩展UserIdentity字段。由于手中搭建的建议客户端以及PACS使用的是早期版本的mDCM，因此这里就直接给出如何修改mDCM代码，fo-dicom中的修改大致相同，这里就不详细介绍了。<br><br>主要的修改有以下几处：<br><br><b>第一：</b>在Dicom.Network文件夹下添加自定义的UserIdentity类，可仿照dcm4che2中的实现来进行，此处为了方便，我只向A-ASSOCIATE-RQ PDU中写入了Useridentity,而并未向A-ASSOCIATE-AC PDU中扩展。因此我定义的UserIdentity类结构如下:<br><p></p>
-<pre><code><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">UserIdentity</span>
-{
-    <span class="comment">//密码类型</span>
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> USERNAME = <span class="number">1</span>;
-
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> USERNAME_PASSCODE = <span class="number">2</span>;
-
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> KERBEROS = <span class="number">3</span>;
-
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> SAML = <span class="number">4</span>;
-
-    <span class="keyword">private</span> <span class="keyword">int</span> userIdentityType;
-    <span class="keyword">private</span> <span class="keyword">bool</span> positiveResponseRequested;
-    <span class="keyword">private</span> <span class="keyword">string</span> username = <span class="keyword">null</span>;
-    <span class="keyword">private</span> <span class="keyword">string</span> passcode = <span class="keyword">null</span>;
-
-    <span class="preprocessor">#<span class="keyword">region</span> Properties</span>
-    <span class="keyword">public</span> <span class="keyword">string</span> UserName
-    {
-        <span class="keyword">get</span> { <span class="keyword">return</span> username; }
-        <span class="keyword">set</span> { username = <span class="keyword">value</span>; }
-    }
-    <span class="keyword">public</span> <span class="keyword">string</span> PassCode
-    {
-        <span class="keyword">get</span> { <span class="keyword">return</span> passcode; }
-        <span class="keyword">set</span> { passcode = <span class="keyword">value</span>; }
-    }
-    <span class="keyword">public</span> <span class="keyword">int</span> UserIdentityType
-    {
-        <span class="keyword">get</span> { <span class="keyword">return</span> userIdentityType; }
-        <span class="keyword">set</span> { userIdentityType = <span class="keyword">value</span>; }
-    }
-    <span class="keyword">public</span> <span class="keyword">bool</span> bPositiveResponseRequested
-    {
-        <span class="keyword">get</span> { <span class="keyword">return</span> positiveResponseRequested; }
-        <span class="keyword">set</span> { positiveResponseRequested = <span class="keyword">value</span>; }
-    }
-    <span class="preprocessor">#<span class="keyword">endregion</span></span>
-
-    <span class="preprocessor">#<span class="keyword">region</span> Constructors</span>
-    <span class="function"><span class="keyword">public</span> <span class="title">UserIdentity</span>(<span class="params"></span>)
-    </span>{
-        <span class="keyword">this</span>.username = <span class="string">"zssure"</span>;
-        <span class="keyword">this</span>.passcode = <span class="string">"zssure"</span>;
-        <span class="keyword">this</span>.positiveResponseRequested = <span class="keyword">false</span>;
-        <span class="keyword">this</span>.userIdentityType = UserIdentity.USERNAME_PASSCODE;
-
-    }
-    <span class="function"><span class="keyword">public</span> <span class="title">UserIdentity</span>(<span class="params"><span class="keyword">string</span> user, <span class="keyword">string</span> passwd</span>)
-    </span>{
-        <span class="keyword">this</span>.username = user;
-        <span class="keyword">this</span>.passcode = passwd;
-        <span class="keyword">this</span>.positiveResponseRequested = <span class="keyword">false</span>;
-        <span class="keyword">this</span>.userIdentityType = UserIdentity.USERNAME_PASSCODE;
-    }
-    <span class="preprocessor">#<span class="keyword">endregion</span></span>
-
-}`&lt;br&gt;
-</code></pre><p><b>第二：</b>扩展PDU.cs类，添加WriteAddingUserIdentity函数,便于向socket流数据体中添加UserIdentity子项目,主要代码如下：<br></p>
-<pre><code> <span class="comment">//User Indentity</span>
-<span class="comment">//http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7</span>
-pdu.Write<span class="params">(<span class="string">"Item-Type"</span>, <span class="params">(byte)</span><span class="number">0</span>x58)</span>;
-pdu.Write<span class="params">(<span class="string">"Reserved"</span>, <span class="params">(byte)</span><span class="number">0</span>x00)</span>;
-pdu.MarkLength16<span class="params">(<span class="string">"Item-Length"</span>)</span>;
-pdu.Write<span class="params">(<span class="string">"User Identity Type"</span>, <span class="params">(byte)</span>userIdentity.UserIdentityType)</span>;
-pdu.Write<span class="params">(<span class="string">"Positive Response Requested"</span>, <span class="params">(userIdentity.bPositiveResponseRequested?<span class="params">(byte)</span><span class="number">0</span>x01:<span class="params">(byte)</span><span class="number">0</span>x00)</span>)</span>;
-pdu.Write<span class="params">(<span class="string">"Primary Field Length"</span>, <span class="params">(ushort)</span>userIdentity.UserName.Length)</span>;
-pdu.Write<span class="params">(<span class="string">"Primary Field"</span>, userIdentity.UserName)</span>;
-pdu.Write<span class="params">(<span class="string">"Secondary Field Length"</span>, <span class="params">(ushort)</span>userIdentity.PassCode.Length)</span>;
-pdu.Write<span class="params">(<span class="string">"Secondary Field"</span>, userIdentity.PassCode)</span>;         
-pdu.WriteLength16<span class="params">()</span>;
-<span class="comment">//zssure:end.</span>
-</code></pre><p><br><br><b>第三：</b>扩展DicomNetworkBase.cs基类，添加WriteAddingUserIdentity函数,便于向socket流数据体中添加UserIdentity子项目。<br></p>
-<pre><code><span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span></span>
-<span class="comment"><span class="xmlDocTag">///</span>Add UserIdentity Information</span>
-<span class="comment"><span class="xmlDocTag">///</span> http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7</span>
-<span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span></span>
-<span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name="associate"&gt;</span><span class="xmlDocTag">&lt;/param&gt;</span></span>
-<span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;param name="userIdentity"&gt;</span><span class="xmlDocTag">&lt;/param&gt;</span></span>
-<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">SendAssociateRequest</span>(<span class="params">DcmAssociate associate, UserIdentity userIdentity</span>)
-</span>{
-    _assoc = associate;
-    <span class="keyword">if</span> (UseRemoteAeForLogName)
-    {
-        LogID = Associate.CalledAE;
-        Log = LogManager.GetLogger(LogID);
-    }
-    Log.Info(<span class="string">"{0} -&gt; Association request:\n{1}"</span>, LogID, Associate.ToString());
-    AAssociateRQ pdu = <span class="keyword">new</span> AAssociateRQ(_assoc);
-    SendRawPDU(pdu.WriteAddingUserIdentity(userIdentity));
-}
-</code></pre><p><br><br><b>第四：</b>修改CStoreClient的OnConnected函数,添加写入UserIdentity子项目。另外为了兼容之前未写入UserIdentity字段的情况，此处做了一下分类讨论。<br></p>
-<pre><code><span class="comment">//zssure:2015/05/26</span>
-<span class="comment">//Adding UserIdentity Information</span>
-<span class="comment">//http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7</span>
-<span class="keyword">if</span> <span class="params">(userIdentity != null)</span>
-{
-    SendAssociateRequest<span class="params">(associate, userIdentity)</span>;
-}
-<span class="keyword">else</span>
-    SendAssociateRequest<span class="params">(associate)</span>;
-<span class="comment">//zssure:end</span>
-</code></pre><p><br></p>
-<p></p><h1><font face="Microsoft YaHei" color="blue">测试：</font></h1><br>重新编译mDCM，将新版Dicom.dll库添加到工程引用，重新使用CStoreClient向dcm4chee服务器发送数据，顺利完成数据上传任务。<br><br>【注】：在实验前要在dcm4chee服务端提前注册一个用户名和密码，比如我这里使用的用户名是zssure,密码是2015。<p></p>
-<p></p><h1><font face="Microsoft YaHei" color="blue">源码下载：</font></h1><br>目前mDCM版本已经少有人维护，所以我就讲本地扩展了UserIdentity的版本上传到了Github上，博文中提到的几个主要修改，诸如UserIdentity.cs、DicomNetworkBase.cs、CStoreClient.cs以及PDU.cs都可以从mDCM仓库中找到。<br><br><b><font size="3"><a href="https://github.com/zssure-thu/mDCM" target="_blank" rel="external">mDCM on zssure GitHub</a></font></b><p></p>
-<p><br><br><br><br><br><br><b><font face="Microsoft YaHei" size="4" color="blue">作者：zssure@163.com</font></b><br><br><b><font face="Microsoft YaHei" size="4" color="blue">时间：2015-05-27</font></b><br></p>
-
+        <p><h1><font face="Microsoft YaHei" color=blue>背景:</font></h1><br>5月份的前半段好懒惰，手里积攒了好多篇文章，也有之前答应过博友要写的，迟迟未动笔。究其根源，有些许懒惰，但更多的是迷惑和一知半解，虽想写但却不知如何入手，零星的感悟要积累成文还是需要时间去沉淀的，以期尽量做到每篇博文有理有据。<br><br>今天正好借着手头新任务的机会，介绍一下DICOM3.0标准中的又一新内容。继之前两篇博文<b><a href="http://blog.csdn.net/zssureqh/article/details/45958139">基于JMeter+dcm4che2测试PACS服务器性能的解决方案(前/续篇)</a></b>中提到的DICOM标准第15部分中的TransferCapability概念，本篇介绍<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part08.html#chapter_D">标准第8部分附录D</a></b>中A-ASSOCIATE-RQ中的UserInformation，以及其扩展UserIdentity（<b><a href="http://medical.nema.org/medical/dicom/current/output/html/part07.html#sect_D.3.3.7">DICOM3.0标准第7部分附录D</a></b>)<br></p>
+<font color=red>此外，在文章后半段，会通过对比dcm4che2与fo-dicom(mDCM）的实现，同时借助于RawCap+WireShark对实际数据包进行分析，给出扩展UserInformation的实现。</font><br><br>
+        
+          <p class="article-more-link">
+            <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="cia6q3qvn000af0npgjegx0mf" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="cia6q7d3a000aqsnpvx8um7z6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a></li></ul>
@@ -270,7 +140,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="cia6q3qvi0004f0npxah3zpla" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="cia6q7d340004qsnpsul4l6p3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -314,7 +184,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="cia6q3qnd0001f0npxq2eq762" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="cia6q7d2v0001qsnphbtrlale" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -357,7 +227,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="cia6q3qvl0007f0npkj0muysu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="cia6q7d370007qsnp0vxm1q1c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a></li></ul>
@@ -400,7 +270,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="cia6q3qmu0000f0npiuagmfvy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="cia6q7d260000qsnpc673c0o1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -445,7 +315,7 @@ pdu.WriteLength16<span class="params">()</span>;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="cia6q3qvj0006f0npvfpgrh80" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="cia6q7d360006qsnpxawk3dma" class="article-share-link">Share</a>
       
       
     </footer>
@@ -496,7 +366,7 @@ pdu.WriteLength16<span class="params">()</span>;
       <ul>
         
           <li>
-            <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">add UserIdentity Sub Item to mDCM</a>
+            <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)</a>
           </li>
         
           <li>
