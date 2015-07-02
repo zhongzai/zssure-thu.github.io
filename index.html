@@ -98,7 +98,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/07/02/做一个平庸程序员，are-you-scared/" data-id="ciblrqha10007jgnpg159hndu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/07/02/做一个平庸程序员，are-you-scared/" data-id="ciblrwu9s0007kwnptv5wbuae" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/编程-算法-能力/">编程,算法,能力</a></li></ul>
@@ -132,15 +132,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1><font face="Microsoft YaHei" color="red">题记：</font></h1><br>趁着<b><font color="blue">《从0到1》</font></b>大火的热潮，近期重新翻阅了一遍<b><font color="red">《从一到无穷大》</font></b>（这样是不是感觉整个非负数轴就圆满了^_^）。虽然作为科普类书籍，但是里面的内容还是比较深奥，幸亏有作者精准的翻译，一番细细品味后犹如醍醐灌顶，心中透亮。<br><br>一直幻想有外星人、宇宙外生物的存在，从《源代码》描述的<b>“平行世界”</b>，到《星际穿越》的<b>“超维空间”</b>，再到时下泛滥的穿越剧，却总未解开心中那团疑惑。或许只有时间的流逝才能给我解答，只怕光阴荏苒，时不我待。遂突发奇想，想模仿大雄坐时空隧道去看看<b><font color="green">“那年今日”</font></b>的我。于是从书柜里翻出了上学时的硬盘，找到了那年今天的学习笔记，有种莫名的激动，闭上双眼努力回想<b><font color="green">‘那时那景’</font></b><font color="green">——这程序好难调啊，还有好多书没看，还有好多事要做——</font><br>原来我一直如此单调的生活，汗！<br><br><h1><font face="Microsoft YaHei" color="red">背景：</font></h1><br>通过寥寥几笔，只可简单回想“那时那景”，但却清晰记得也遇到了奇葩问题，如同今天的‘坑’一样:<br><br><br><b><font color="grey">在之前的专栏中曾简单介绍过fo-dicom实现各种DIMSE-C服务，简便快捷，诸如<b><a href="http://blog.csdn.net/zssureqh/article/details/41631563" target="_blank" rel="external">fo-dicom网络传输之C-FIND and C-MOVE</a></b>。今天在结合WCF使用fo-dicom时遇到了一个问题，“多个序列的文件被写入到了同一个文件中，最后生成了一个多大几个G的大文件”。</font></b><br><br><br>起初以为是对WCF中实例模式和对象生命周期，即PerCall、PerSession、Singleton，掌握不清，使得将多次客户端调用共用了同一个存储地址。遂阅读了诸多关于这方面的资料，以及C#中的闭包、变量作用域和变量生命周期相关的资料（详情可参见博文最后参考文献章节【1】【2】）。<br><br>最后在单步调试时发现，原来是fo-dicom开源库搞的鬼。基于WCF的C-MOVE服务无法实现同时下载多套数据的根源在于fo-dicom中的DicomService服务的绑定采用的是类的绑定，因此其对于CStoreRequest的事件只能绑定到类一级中。而我们此刻实际的需求是<b><font color="red">“要根据不同的dicom文件存储到不同的位置，且该位置信息通过dicom文件内部自有信息无法构造”</font></b>。之前错误的将文件存储信息通过“闭包”【3】的形式传递进了DicomService类绑定函数中，此刻绑定到类的DicomService服务与闭包封送的绑定到对象的存储路径之间出现了矛盾，这也就是最终导致多个dcm序列存储到同一个大文件中的问题。<br><br><h1><font face="Microsoft YaHei" color="red">问题剖析：</font></h1><br><h2><font face="Microsoft YaHei" color="green">fo-dicom中DicomServer服务绑定分析：</font></h2><br>在DicomServer.cs文件中，对于实际DICOM服务的绑定放在OnAcceptTcpClient函数中，具体代码如下:<br><br>    private void OnAcceptTcpClient(IAsyncResult result) {<br>    try {<br>        if (_isDisposing || _listener == null)<br>            return;<br>        var client = _listener.EndAcceptTcpClient(result);<br>        if (Options != null)<br>            client.NoDelay = Options.TcpNoDelay;<br>        else<br>            client.NoDelay = DicomServiceOptions.Default.TcpNoDelay;<br>        Stream stream = client.GetStream();<br>        if (_cert != null) {<br>            var ssl = new SslStream(stream, false);<br>            ssl.AuthenticateAsServer(_cert, false, SslProtocols.Tls, false);<br>            stream = ssl;<br>            }<br>        T scp = (T)Activator.CreateInstance(typeof(T), stream, Logger);<br>        if (Options != null)<br>            scp.Options = Options;<br>            _clients.Add(scp);<br>        } catch (Exception e) {<br>            if (Logger == null)<br>                Logger = LogManager.Default.GetLogger(“Dicom.Network”);<br>                Logger.Error(“Exception accepting client: “ + e.ToString());<br>        } finally {<br>            if (!_isDisposing &amp;&amp; _listener != null)<br>                _listener.BeginAcceptTcpClient(OnAcceptTcpClient, null);<br>        }<br>    }<br>在利用<font color="blue">(T)Activator.CreateInstance(typeof(T),stream.Logger);</font>创建完DicomService服务对象scp后，DicomServer并未留有接口对scp对象添加任何绑定。因此要想将自定义的扩展传递给DicomServer中的DicomService对象，只能使用类级别的静态事件绑定。如之前专栏博文<a href="http://blog.csdn.net/zssureqh/article/details/41631563" target="_blank" rel="external">fo-dicom网络传输之C-FIND and C-MOVE</a>中的示例，代码如下所示:<br><br><br>    public static OnCStoreRequestCallback OnCStoreRequestCallBack;<br>    public DicomCStoreResponse OnCStoreRequest(DicomCStoreRequest request)<br>    {<br>        //to do yourself<br>        //实现自定义的存储方案<br>        if (OnCStoreRequestCallBack != null)<br>        {<br>            return OnCStoreRequestCallBack(request);<br>        }<br>        return new DicomCStoreResponse(request, DicomStatus.NoSuchActionType);<br>    }<br><br>由于OnCStoreRequestCallback绑定到CStoreSCP类一级中，因此在CMoveSCP启动后，每次C-MOVE-RQ触发本地C-STORE时刻，新绑定的OnCStoreRequestCallBack会自动覆盖之前的绑定。<br><br><h2><font face="Microsoft YaHei" color="green">WCF中实例模式和对像生命周期：</font></h2><br>参照资料【1】中的示意图，WCF的实例模型有Per Call、Per Session、Singleton三种，如下图：<br><br><img src="http://img.blog.csdn.net/20150604171328857" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150604171341774" alt="这里写图片描述"><br><img src="http://img.blog.csdn.net/20150604171231052" alt="这里写图片描述"><br>三种不同实例模式所对应的是WCF的实例对象的生命周期，即当WCF客户端发起请求时，针对该请求是如何创建WCF服务端实例对象的，但是由于WCF底层并不提供DICOM服务，因此无论采用何种WCF实例模式，最终调用的都是fo-dicom提供的DICOM服务，来此WCF客户端的异步请求具体的流程如下图：<br><br><img src="http://img.blog.csdn.net/20150604171255763" alt="这里写图片描述"><br><h1><font face="Microsoft YaHei" color="red">问题解决：</font></h1><br>按照上述的分析，导致博文前面提到的奇葩问题的根源是在fo-dicom的DicomServer服务中创建的派生自DicomService的对象只有一个，而且其事件绑定采用的是静态事件绑定，基于类层级的。一旦设置事件绑定，直到终止服务为止，该事件一直有效。即使修改fo-dicom中DicomServer底层源码，将对DicomService及其派生类的事件绑定改成基于对象的，也无法解决该问题。原因是DicomServer的开启需要绑定到端口，而正常情况下一个端口只能绑定一个应用，因此无法创建多个DicomServer对象绑定到同一个端口。<br><br>那么到底如何解决问题，实现现实中的奇葩需求呢？我这里采用了一种笨办法，如下图：<br><br><img src="http://img.blog.csdn.net/20150604171323000" alt="这里写图片描述"><br><br><br><b>1)</b> 在DicomServer服务类中添加一个全局Hast表，在WCF服务端接收到来自客户端的C-MOVE请求，且还未转发到DicomServer之前，将与请求相关的特殊需求保存到HastTable全局表中；无论WCF是采用异步还是同步模式，在HashTable表中都存储了与每个需求对应的特殊变量；<br><br><br><b>2)</b>当WCF服务端将需求转发到实际的DicomServer时，DicomServer类绑定的事件内部会读取HastTable中的数据来进行特定处理。<br><br><br><b>3)</b> 当WCF请求处理完成后，再将之前插入到HashTable中的特定数据清除，以便循环利用HastTable全局表。<br><br><br>至此针对不同请求，进行不同处理的问题就解决了。<br><br><br><h1><font face="Microsoft YaHei" color="red">参考资料：</font></h1>
-
-<p>【1】 <a href="http://www.codeproject.com/Articles/188749/WCF-Sessions-Brief-Introduction" target="_blank" rel="external">http://www.codeproject.com/Articles/188749/WCF-Sessions-Brief-Introduction</a><br><br>【2】 <a href="http://www.cnblogs.com/webglcn/archive/2012/05/02/2479873.html" target="_blank" rel="external">http://www.cnblogs.com/webglcn/archive/2012/05/02/2479873.html</a><br><br>【3】 <a href="http://www.cnblogs.com/frankfang/archive/2011/08/03/2125663.html" target="_blank" rel="external">http://www.cnblogs.com/frankfang/archive/2011/08/03/2125663.html</a></p>
-<p><br><b><font face="Microsoft YaHei" size="4" color="blue">作者：zssure@163.com</font></b><br><br><b><font face="Microsoft YaHei" size="4" color="blue">时间：2015-06-04</font></b><br></p>
-
+        <h1><font face="Microsoft YaHei" color=red>题记：</font></h1><br>趁着<b><font color=blue>《从0到1》</font></b>大火的热潮，近期重新翻阅了一遍<b><font color=red>《从一到无穷大》</font></b>（这样是不是感觉整个非负数轴就圆满了^_^）。虽然作为科普类书籍，但是里面的内容还是比较深奥，幸亏有作者精准的翻译，一番细细品味后犹如醍醐灌顶，心中透亮。<br><br>一直幻想有外星人、宇宙外生物的存在，从《源代码》描述的<b>“平行世界”</b>，到《星际穿越》的<b>“超维空间”</b>，再到时下泛滥的穿越剧，却总未解开心中那团疑惑。或许只有时间的流逝才能给我解答，只怕光阴荏苒，时不我待。遂突发奇想，想模仿大雄坐时空隧道去看看<b><font color=green>“那年今日”</font></b>的我。于是从书柜里翻出了上学时的硬盘，找到了那年今天的学习笔记，有种莫名的激动，闭上双眼努力回想<b><font color=green>‘那时那景’</font></b><font color=green>——这程序好难调啊，还有好多书没看，还有好多事要做——</font><br>原来我一直如此单调的生活，汗！<br><br><h1><font face="Microsoft YaHei" color=red>背景：</font></h1><br>通过寥寥几笔，只可简单回想“那时那景”，但却清晰记得也遇到了奇葩问题，如同今天的‘坑’一样:<br><br><br><b><font color=grey>在之前的专栏中曾简单介绍过fo-dicom实现各种DIMSE-C服务，简便快捷，诸如<b><a href="http://blog.csdn.net/zssureqh/article/details/41631563">fo-dicom网络传输之C-FIND and C-MOVE</a></b>。今天在结合WCF使用fo-dicom时遇到了一个问题，“多个序列的文件被写入到了同一个文件中，最后生成了一个多大几个G的大文件”。</font></b><br><br><br>起初以为是对WCF中实例模式和对象生命周期，即PerCall、PerSession、Singleton，掌握不清，使得将多次客户端调用共用了同一个存储地址。遂阅读了诸多关于这方面的资料，以及C#中的闭包、变量作用域和变量生命周期相关的资料（详情可参见博文最后参考文献章节【1】【2】）。<br><br>最后在单步调试时发现，原来是fo-dicom开源库搞的鬼。基于WCF的C-MOVE服务无法实现同时下载多套数据的根源在于fo-dicom中的DicomService服务的绑定采用的是类的绑定，因此其对于CStoreRequest的事件只能绑定到类一级中。而我们此刻实际的需求是<b><font color=red>“要根据不同的dicom文件存储到不同的位置，且该位置信息通过dicom文件内部自有信息无法构造”</font></b>。之前错误的将文件存储信息通过“闭包”【3】的形式传递进了DicomService类绑定函数中，此刻绑定到类的DicomService服务与闭包封送的绑定到对象的存储路径之间出现了矛盾，这也就是最终导致多个dcm序列存储到同一个大文件中的问题。<br><br>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/04/再次剖析fo-dicom中DicomService的自定义事件绑定/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/06/04/再次剖析fo-dicom中DicomService的自定义事件绑定/" data-id="ciblrqh9z0006jgnpira22307" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/06/04/再次剖析fo-dicom中DicomService的自定义事件绑定/" data-id="ciblrwu9r0006kwnppok0u6by" class="article-share-link">Share</a>
       
       
     </footer>
@@ -182,7 +183,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="ciblrqhac000ejgnpmu2tq3mk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="ciblrwu9x000ekwnpndvc28k6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a></li></ul>
@@ -225,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="ciblrqh9x0004jgnpy3gbj0zo" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="ciblrwu9p0004kwnp7f8y1dkg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -269,7 +270,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="ciblrqh9s0001jgnp6ep4kvh7" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="ciblrwu9g0001kwnpjmce5vz4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -312,7 +313,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="ciblrqhaa000bjgnpxzetgqrv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="ciblrwu9w000bkwnpagv3oqho" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a></li></ul>
@@ -355,7 +356,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ciblrqgz70000jgnpol5ccuxm" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ciblrwu8n0000kwnpgi8fh74t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -400,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="ciblrqha8000ajgnp2ob43jqe" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="ciblrwu9u000akwnphha5i75j" class="article-share-link">Share</a>
       
       
     </footer>
