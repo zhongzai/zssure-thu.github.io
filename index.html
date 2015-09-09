@@ -65,6 +65,52 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-开源书籍：DICOM3-0标准中文版" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/09/09/开源书籍：DICOM3-0标准中文版/" class="article-date">
+  <time datetime="2015-09-09T07:57:35.000Z" itemprop="datePublished">2015-09-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/09/开源书籍：DICOM3-0标准中文版/">开源书籍：DICOM3.0标准中文版</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p></p><h1><font face="Microsoft YaHei" color="blue">题记：</font></h1><br>博客早已不是时下最流行的传播媒介，或许在技术圈子还仅存一线生机。之所以选择技术博客，初衷是为了记录自己工作中的点滴，因为随着岁月流逝，记忆力已大不如从前；其次是为了交流和分享，结交同行和同好，相互探讨从而共同进步；最后是希望能够集合大众所长，做一些更远大、更有意义的事情。<br><br>零零散散，原创博文也已写了上百篇，有<b>“DICOM医学图像处理”专栏</b>、有<b>“踩坑填坑”</b>、有<b>“日积月累”</b>，还有近期的<b>“那时今日”</b>系列。之所以分类如此复杂，主要是希望保证原创博文的质量，通过近一年与博友的交流，发现在这及其细分的领域需求很大，而资料甚少，尤其是中文资料。<br><br>这样就萌发了之前的想法——<b><font face="Microsoft YaHei" color="green">以开源书籍的方式翻译DICOM协议</font></b>。自发翻译<b><a href="http://medical.nema.org/standard.html" target="_blank" rel="external">DICOM官方标准</a></b>，<u><b><font color="purple">以DICOM协议为切入点，通过阅读、研究、直至翻译，更加全面掌握标准，尤其加深对医疗行业的了解</font></b></u>。<br><br>随着国内新医改的逐步深入，各行各业的创业者开始涉足医疗行业，无论出于颠覆旧有体制和现行标准，还是出于对DICOM标准了解不足的角度，未来新的医疗大环境下必然需要标准的更新，或新的标准。称之为DICOMX.X也好，称之为XXX也罢。充分研读现有标准，实时关注当下新需求，为改善或制定适应未来医疗环境的新标做准备……<br><p></p>
+<p></p><h1><font face="Microsoft YaHei" color="blue">背景：</font></h1><br>如我博客格言“只要踏出一步，路就在前方”所言，路总是需要一步一步走的，事情总是需要一件一件做的。因此近期开始着手启动“DICOM中文标准”开源书籍项目，由于DICOM标准浩如瀚海，仅凭一己之力很难推动。需要集合大家所长，这也是开源书籍的最大魅力所在。<br><p></p>
+<p></p><h1><font face="Microsoft YaHei" color="blue">开源书籍协同工具：</font></h1><br>开源书籍方式较多，为了后续更好的协作，更高的工作效率，选择一种合适的方式很重要。近期尝试和了解了诸多协同编辑工具，例如GitHub、GitBook、石墨、看云。各种工具各有利弊：<br><p></p>
+<p><b><font size="3" color="green">GitHub：</font></b>GitHub是基于Git分布式版本管理工具的一种协同管理工具，平台中使用MarkDown进行文本管理，有诸多开源书籍是放到GitHub中托管的（诸如<b><a href="http://nqdeng.github.io/7-days-nodejs/" target="_blank" rel="external">七天学会NodeJS</a></b>、<b><a href="http://git.oschina.net/widuu/chinese_docker" target="_blank" rel="external">Docker中文指南</a></b>、<b><a href="https://github.com/Unknwon/go-fundamental-programming" target="_blank" rel="external">Go编程基础</a></b>）。GitHub在开发者中拥有极高的热度，内部拥有众多的开发高手，对于技术类书籍托管到GitHub最合适。但是GitHub在国内访问时常会出问题，如果采用GitHub作为开源书籍托管平台，要考虑这个问题。<br></p>
+<p><b><font size="3" color="green">GitBook：</font></b>Github本身的目录结构并不一定符合阅读的习惯，而且没有提供pdf,ePUB,MOBI等格式的转换下载。GitBook 就是解决这一问题,GitBook在保持在Github的书写习惯外，稍加配置，就能自动发布到GitBook上，形成界面漂亮的电子书了,同时还支持html,pdf,ePUB,MOBI等格式。例如<b><a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="external">Docker技术入门与实践</a></b>，GitBook的操作与之前<b><a href="http://blog.csdn.net/zssureqh/article/details/45921911" target="_blank" rel="external">利用Hexo搭建Github的个人主页</a></b>中提到的Hexo很相似。对于GitBook的使用方法的介绍文档也比较多，<b><a href="http://www.ituring.com.cn/article/127744" target="_blank" rel="external">使用GitBook平台发布电子书</a></b>、<b><a href="http://www.csdn.net/article/2014-04-09/2819217-gitbook-using-git-markdown-book" target="_blank" rel="external">GitBook：使用Git+Markdown快速制作电子书</a></b>。这对于程序员来说操作还算简单，但对非程序员来讲比较繁琐。<br></p>
+<p><b><font size="3" color="green">石墨：</font></b>一款小清新的文档在线协同编辑软件，其内部也可以协同编辑，评论，还可以实时显示评论者头像（如下图）。但对于学术和研究氛围浓郁的题材略显活泼。<br><br><img src="http://img.blog.csdn.net/20150614011412187" alt="这里写图片描述"><br><br><b><font size="3" color="green">看云：</font></b>注册完成后，立刻尝试了一下，也是使用MarkDown进行编辑，目前已有诸多开源书籍放到了看云平台中（如下图所示），与此同时还可以设置权限，基本能够满足前期的要求，但是每个文档的编辑人员只能设置为9人（如下图所示），所以需要分级管理才能将整个DICOM3.0标准分配完成。前期人员不多的情况下可以由我来管理最顶层目录，然后按照功能或难易程度分成不同的几部分（例如就分成9部分）。然后每一部分负责的人可以再将其内部的文档分给9个人来编辑。最后每间隔一段时间进行一次整合。<br><br><img src="http://img.blog.csdn.net/20150614011424921" alt="这里写图片描述"><br><br><img src="http://img.blog.csdn.net/20150614011433907" alt="这里写图片描述"><br></p>
+<p></p><h1><font face="Microsoft YaHei" color="red">项目启动计划：</font></h1><br>作为开源书籍，主要目的是希望通过汇聚大家所长，为行业内从业者提供免费的帮助，与此同时能够对项目参与者自身经验的锤炼和升华，提升写作上水平和专业技能。<br><br>鉴于DICOM3.0标准复杂，专业性强，且章节众多，因此采用分工合作、协同编辑的方式，<b><font color="green">每个章节推选一位负责人</font></b>，<b><font color="purple">负责人的主要职责是负责协同其他成员对该章节的编辑</font></b>，约定<b><font color="red">每一个月统一整合一次</font></b>，<b><font color="blue">发布到统一的平台</font></b>。另外也会请求<b>英文专业人士协助</b>，对翻译中的错误、瑕疵进行修改，最大限度的呈现英文原文。<br><br>通过上述各协同工具的分析和体验，<b><font face="Microsoft YaHei" size="3" color="red">目前初期启动计划如下：</font></b><br><br><b><font face="Microsofy YaHei" color="red">第一阶段：</font></b>使用<b><font color="red">看云工具</font></b>进行协同编辑。将<b><a href="http://medical.nema.org/standard.html" target="_blank" rel="external">官网最新DICOM3.0标准</a></b>进行划分，初步构想按照<b>数据格式</b>、<b>网络传输</b>、<b>应用实例</b>、<b>其他</b>分为4大部分。每一部分有一个主要负责人，然后主要负责人可以寻找其他成员。（<b><font color="grey">【注】：目前由于看云软件所限，每个小组最多9名成员，当然如果逐级分割的话理论上是可以扩展到无数成员的，这都是后话。</font></b>)<br><br><b><font face="Microsofy YaHei" color="red">第二阶段：</font></b>各部分的负责人<b><font color="red">每个月统一整合一次</font></b>各自的最新版本。然后由管理者统一整合到对外发布的版本中，该版本完全公开，供大家浏览。<b><font color="grey">鉴于GitHub和看云都支持MarkDown格式，与此同时为了保证数据的安全性，以及被更多的人员浏览，最后管理者也会将每月整合的版本同步到GitHub上，如果有成员希望在GitHub进行提交修改，有管理者和各部分负责人每月讨论时来决定是否需要整合。</font></b><br><br><b><font face="Microsofy YaHei" color="red">第三阶段：</font></b>每个月发布的版本会推送给专业的英文翻译者进行语法层面的审核，做到翻译准确无误。<br><br><b><font face="Microsofy YaHei" color="red">第四阶段：</font></b><b>具体示例代码</b>。该阶段与上述三阶段时间上并非完全分开先后，可重叠提交。每部分的示例代码统一提交到GitHub主版本库中，并在标准中以脚注或连接的方式给出。示例代码提交时要表明语言版本（如C、C++、C#、Java等），以及使用的开源库（如dcmtk、fo-dicom、dcm4che等），并确保代码下载编译后可运行。（<b><font color="grey">示例代码中如果需要使用到具体的dcm文件，请确保做好匿名化处理，做到保护患者隐私，特此说明。</font></b>)<br><p></p>
+<p></p><h1><font face="Microsoft YaHei" color="blue">结语：</font></h1><br>初步的设想如博文中所描述，有兴趣者可邮件联系我。<br><br>详情可访问Github主页:<a href="https://github.com/zssure-thu/DICOM-Chinese" target="_blank" rel="external">DICOM-Chinese开源书籍</a><br><br><br><br><br><br><br><br><p></p>
+<p><font face="Microsoft YaHei" size="3" color="blue"><b>作者：zssure@163.com</b></font><br></p>
+<p><font face="Microsoft YaHei" size="3" color="blue"><b>时间：2015-06-14凌晨</b></font><br></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/09/09/开源书籍：DICOM3-0标准中文版/" data-id="ciechxt3y0001g0npngruzt74" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-做一个平庸程序员，are-you-scared" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/07/02/做一个平庸程序员，are-you-scared/" class="article-date">
@@ -98,7 +144,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/07/02/做一个平庸程序员，are-you-scared/" data-id="ciblrwu9s0007kwnptv5wbuae" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/07/02/做一个平庸程序员，are-you-scared/" data-id="ciechxtdu0008g0npkoiygn7l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/编程-算法-能力/">编程,算法,能力</a></li></ul>
@@ -141,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/06/04/再次剖析fo-dicom中DicomService的自定义事件绑定/" data-id="ciblrwu9r0006kwnppok0u6by" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/06/04/再次剖析fo-dicom中DicomService的自定义事件绑定/" data-id="ciechxtds0007g0npljht2zhq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -183,7 +229,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="ciblrwu9x000ekwnpndvc28k6" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/" data-id="ciechxtdy000fg0np2fg47s2l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a></li></ul>
@@ -226,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="ciblrwu9p0004kwnp7f8y1dkg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/" data-id="ciechxtdq0005g0npx0ncfw45" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -270,7 +316,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="ciblrwu9g0001kwnpjmce5vz4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/" data-id="ciechxtdm0002g0np9l6fva2l" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a></li></ul>
@@ -313,7 +359,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="ciblrwu9w000bkwnpagv3oqho" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/buildmyselfPageOnGithub/" data-id="ciechxtdx000cg0npr3dpdl0y" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a></li></ul>
@@ -356,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ciblrwu8n0000kwnpgi8fh74t" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/Hello-World-zssure/" data-id="ciechxt3g0000g0npe6a6phnr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -401,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="ciblrwu9u000akwnphha5i75j" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/05/22/hello-world/" data-id="ciechxtdw000bg0npiub8tcgp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -440,7 +486,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -450,6 +496,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/09/09/开源书籍：DICOM3-0标准中文版/">开源书籍：DICOM3.0标准中文版</a>
+          </li>
         
           <li>
             <a href="/2015/07/02/做一个平庸程序员，are-you-scared/">做一个平庸程序员，are you scared?</a>
@@ -465,10 +515,6 @@
         
           <li>
             <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/">基于JMeter+dcm4che2测试PACS服务器性能的解决方案（续篇）</a>
-          </li>
-        
-          <li>
-            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能/">基于JMeter+dcm4che2测试PACS服务器性能的解决方案（前篇）</a>
           </li>
         
       </ul>
