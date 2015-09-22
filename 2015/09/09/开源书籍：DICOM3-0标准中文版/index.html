@@ -14,7 +14,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20150614011412187">
 <meta property="og:image" content="http://img.blog.csdn.net/20150614011424921">
 <meta property="og:image" content="http://img.blog.csdn.net/20150614011433907">
-<meta property="og:updated_time" content="2015-09-09T07:59:25.385Z">
+<meta property="og:updated_time" content="2015-09-22T06:55:18.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开源书籍：DICOM3.0标准中文版">
 <meta name="twitter:description" content="题记：博客早已不是时下最流行的传播媒介，或许在技术圈子还仅存一线生机。之所以选择技术博客，初衷是为了记录自己工作中的点滴，因为随着岁月流逝，记忆力已大不如从前；其次是为了交流和分享，结交同行和同好，相互探讨从而共同进步；最后是希望能够集合大众所长，做一些更远大、更有意义的事情。零零散散，原创博文也已写了上百篇，有“DICOM医学图像处理”专栏、有“踩坑填坑”、有“日积月累”，还有近期的“那时今日”">
@@ -89,7 +89,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p></p><h1><font face="Microsoft YaHei" color="blue">题记：</font></h1><br>博客早已不是时下最流行的传播媒介，或许在技术圈子还仅存一线生机。之所以选择技术博客，初衷是为了记录自己工作中的点滴，因为随着岁月流逝，记忆力已大不如从前；其次是为了交流和分享，结交同行和同好，相互探讨从而共同进步；最后是希望能够集合大众所长，做一些更远大、更有意义的事情。<br><br>零零散散，原创博文也已写了上百篇，有<b>“DICOM医学图像处理”专栏</b>、有<b>“踩坑填坑”</b>、有<b>“日积月累”</b>，还有近期的<b>“那时今日”</b>系列。之所以分类如此复杂，主要是希望保证原创博文的质量，通过近一年与博友的交流，发现在这及其细分的领域需求很大，而资料甚少，尤其是中文资料。<br><br>这样就萌发了之前的想法——<b><font face="Microsoft YaHei" color="green">以开源书籍的方式翻译DICOM协议</font></b>。自发翻译<b><a href="http://medical.nema.org/standard.html" target="_blank" rel="external">DICOM官方标准</a></b>，<u><b><font color="purple">以DICOM协议为切入点，通过阅读、研究、直至翻译，更加全面掌握标准，尤其加深对医疗行业的了解</font></b></u>。<br><br>随着国内新医改的逐步深入，各行各业的创业者开始涉足医疗行业，无论出于颠覆旧有体制和现行标准，还是出于对DICOM标准了解不足的角度，未来新的医疗大环境下必然需要标准的更新，或新的标准。称之为DICOMX.X也好，称之为XXX也罢。充分研读现有标准，实时关注当下新需求，为改善或制定适应未来医疗环境的新标做准备……<br><p></p>
+        <p></p><h1><font face="Microsoft YaHei" color="blue">题记：</font></h1><br>博客早已不是时下最流行的传播媒介，或许在技术圈子还仅存一线生机。之所以选择技术博客，初衷是为了记录自己工作中的点滴，因为随着岁月流逝，记忆力已大不如从前；其次是为了交流和分享，结交同行和同好，相互探讨从而共同进步；最后是希望能够集合大众所长，做一些更远大、更有意义的事情。<br><br>零零散散，原创博文也已写了上百篇，有<b>“DICOM医学图像处理”专栏</b>、有<b>“踩坑填坑”</b>、有<b>“日积月累”</b>，还有近期的<b>“那时今日”</b>系列。之所以分类如此复杂，主要是希望保证原创博文的质量，通过近一年与博友的交流，发现在这及其细分的领域需求很大，而资料甚少，尤其是中文资料。<br><br>这样就萌发了之前的想法——<b><font face="Microsoft YaHei" color="green">以开源书籍的方式翻译DICOM协议</font></b>。自发翻译<b><a href="http://medical.nema.org/standard.html" target="_blank" rel="external">DICOM官方标准</a></b>，<u><b><font color="purple">以DICOM协议为切入点，通过阅读、研究、直至翻译，更加全面掌握标准，尤其加深对医疗行业的了解</font></b></u>。<br><br>随着国内新医改的逐步深入，各行各业的创业者开始涉足医疗行业，无论出于颠覆旧有体制和现行标准，还是出于对DICOM标准了解不足的角度，未来新的医疗大环境下必然需要标准的更新，或新的标准。称之为DICOMX.X也好，称之为XXX也罢。充分研读现有标准，实时关注当下新需求，为改善或制定适应未来医疗环境的新标做准备……<br><br><a id="more"></a><p></p>
 <p></p><h1><font face="Microsoft YaHei" color="blue">背景：</font></h1><br>如我博客格言“只要踏出一步，路就在前方”所言，路总是需要一步一步走的，事情总是需要一件一件做的。因此近期开始着手启动“DICOM中文标准”开源书籍项目，由于DICOM标准浩如瀚海，仅凭一己之力很难推动。需要集合大家所长，这也是开源书籍的最大魅力所在。<br><p></p>
 <p></p><h1><font face="Microsoft YaHei" color="blue">开源书籍协同工具：</font></h1><br>开源书籍方式较多，为了后续更好的协作，更高的工作效率，选择一种合适的方式很重要。近期尝试和了解了诸多协同编辑工具，例如GitHub、GitBook、石墨、看云。各种工具各有利弊：<br><p></p>
 <p><b><font size="3" color="green">GitHub：</font></b>GitHub是基于Git分布式版本管理工具的一种协同管理工具，平台中使用MarkDown进行文本管理，有诸多开源书籍是放到GitHub中托管的（诸如<b><a href="http://nqdeng.github.io/7-days-nodejs/" target="_blank" rel="external">七天学会NodeJS</a></b>、<b><a href="http://git.oschina.net/widuu/chinese_docker" target="_blank" rel="external">Docker中文指南</a></b>、<b><a href="https://github.com/Unknwon/go-fundamental-programming" target="_blank" rel="external">Go编程基础</a></b>）。GitHub在开发者中拥有极高的热度，内部拥有众多的开发高手，对于技术类书籍托管到GitHub最合适。但是GitHub在国内访问时常会出问题，如果采用GitHub作为开源书籍托管平台，要考虑这个问题。<br></p>
@@ -103,7 +103,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/09/开源书籍：DICOM3-0标准中文版/" data-id="ciechxt3y0001g0npngruzt74" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/09/开源书籍：DICOM3-0标准中文版/" data-id="ciev0g8uj0003aonpcv1stlox" class="article-share-link">Share</a>
       
       
     </footer>
@@ -111,6 +111,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2015/09/22/DICOM3-0标准中文版开源书籍/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          DICOM3.0标准中文版开源书籍
+        
+      </div>
+    </a>
   
   
     <a href="/2015/07/02/做一个平庸程序员，are-you-scared/" id="article-nav-older" class="article-nav-link-wrap">
@@ -133,7 +142,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/编程-算法-能力/">编程,算法,能力</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM-JMeter-dcm4che2/">DICOM,JMeter,dcm4che2</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DICOM3-0/">DICOM3.0</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo-node-js-npm-github-git/">hexo, node.js, npm, github, git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mDCM-dcm4che-UserIdentity-DICOM/">mDCM,dcm4che,UserIdentity,DICOM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/编程-算法-能力/">编程,算法,能力</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -142,7 +151,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/DICOM-JMeter-dcm4che2/" style="font-size: 20px;">DICOM,JMeter,dcm4che2</a> <a href="/tags/hexo-node-js-npm-github-git/" style="font-size: 10px;">hexo, node.js, npm, github, git</a> <a href="/tags/mDCM-dcm4che-UserIdentity-DICOM/" style="font-size: 10px;">mDCM,dcm4che,UserIdentity,DICOM</a> <a href="/tags/编程-算法-能力/" style="font-size: 10px;">编程,算法,能力</a>
+      <a href="/tags/DICOM-JMeter-dcm4che2/" style="font-size: 20px;">DICOM,JMeter,dcm4che2</a> <a href="/tags/DICOM3-0/" style="font-size: 10px;">DICOM3.0</a> <a href="/tags/hexo-node-js-npm-github-git/" style="font-size: 10px;">hexo, node.js, npm, github, git</a> <a href="/tags/mDCM-dcm4che-UserIdentity-DICOM/" style="font-size: 10px;">mDCM,dcm4che,UserIdentity,DICOM</a> <a href="/tags/编程-算法-能力/" style="font-size: 10px;">编程,算法,能力</a>
     </div>
   </div>
 
@@ -151,7 +160,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">September 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -161,6 +170,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/09/22/DICOM3-0标准中文版开源书籍/">DICOM3.0标准中文版开源书籍</a>
+          </li>
         
           <li>
             <a href="/2015/09/09/开源书籍：DICOM3-0标准中文版/">开源书籍：DICOM3.0标准中文版</a>
@@ -176,10 +189,6 @@
         
           <li>
             <a href="/2015/05/27/add-UserIdentity-Sub-Item-to-mDCM/">Add UserIdentity Sub-Item to A-ASSOCIATE-RQ PDU for fo-dicom(mDCM)</a>
-          </li>
-        
-          <li>
-            <a href="/2015/05/24/利用JMeter-dcm4che2测试DICOM服务器的C-STORE-SCP性能-2/">基于JMeter+dcm4che2测试PACS服务器性能的解决方案（续篇）</a>
           </li>
         
       </ul>
